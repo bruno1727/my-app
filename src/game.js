@@ -10,7 +10,8 @@ export default class Game extends React.Component {
             history: new History,
             stepNumber: 0,
             xIsNext: true,
-            playWithComputer: false,
+            playWithComputer: true,
+            myTurn: true,
         };
     }
 
@@ -37,15 +38,36 @@ export default class Game extends React.Component {
         return this.calculateWinner(this.getCurrent());
     }
 
-    handleClick(i){
+    handleClick(i, allowComputerMove = true){
+
         this.state.history.split(this.state.stepNumber);
+
         if(this.hasWinner() || this.state.history.last()[i]){
             return;
         }
+
         this.state.history.add(this.state.xIsNext, i);
+
         this.setState({
             stepNumber: this.state.history.length()-1,
             xIsNext: !this.state.xIsNext,
+            myTurn: !this.state.myTurn
+        });
+
+        if(this.state.playWithComputer && allowComputerMove){
+            this.getComputerMove()
+                .then(response => response.json())
+                .then(i => this.handleClick(i, false));
+        }
+    }
+
+    getComputerMove(){
+        return fetch('http://localhost:3002/move', {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(this.state.history.get(this.state.history.length() - 1))
         });
     }
 
