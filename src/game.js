@@ -62,7 +62,7 @@ export default class Game extends React.Component {
     }
 
     getComputerMove(){
-        return fetch('http://localhost:3002/move', {
+        return fetch('http://localhost:3002/move/computer', {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json'
