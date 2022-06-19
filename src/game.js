@@ -1,6 +1,7 @@
 import React from 'react';
 import Board from './board';
 import HistoryNavigator from './history-navigator';
+import axios from 'axios';
 
 export default class Game extends React.Component {
 
@@ -56,19 +57,13 @@ export default class Game extends React.Component {
 
         if(this.state.playWithComputer && allowComputerMove){
             this.getComputerMove()
-                .then(response => response.json())
+                .then(response => response.data)
                 .then(i => this.handleClick(i, false));
         }
     }
 
     getComputerMove(){
-        return fetch('http://localhost:3002/move/computer', {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(this.state.history.get(this.state.history.length() - 1))
-        });
+        return axios.post('http://localhost:3002/move/computer', this.state.history.get(this.state.history.length() - 1));
     }
 
     jumpTo(step){
